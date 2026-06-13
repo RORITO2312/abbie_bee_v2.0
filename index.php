@@ -136,6 +136,9 @@ function pImgOrSvg(array $p, string $cls = ''): string {
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
       background: var(--primary-dk);
+      background-image: url('/uploads/hero-bg.jpg');
+      background-size: cover;
+      background-position: center;
     }
     .hero-overlay {
       position: absolute; inset: 0;
@@ -492,7 +495,7 @@ function pImgOrSvg(array $p, string $cls = ''): string {
     <a href="#" onclick="showPage('contact')" id="nav-contact">Contacto</a>
   </nav>
   <div class="sf-logo-wrap">
-    <div class="sf-logo-text">Abbie <span class="bee">🐝</span> BEE</div>
+    <img src="/uploads/logo.png" alt="Abbie BEE" style="height:52px;object-fit:contain;filter:brightness(0) invert(1)">
   </div>
   <div class="sf-actions">
     <div class="search-wrap">
