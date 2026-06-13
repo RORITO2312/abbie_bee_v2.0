@@ -4,7 +4,6 @@
 // Abbie BEE
 // =====================================================
 require_once __DIR__ . '/config.php';
-session_start();
 
 // Si ya está logueado, redirigir
 if (!empty($_SESSION['admin_id'])) {
