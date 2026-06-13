@@ -1,8 +1,7 @@
 <?php
-// =====================================================
-// login.php — Panel de acceso administrador
-// Abbie BEE
-// =====================================================
+ini_set('session.cookie_secure', 0);
+ini_set('session.cookie_samesite', 'Lax');
+
 require_once __DIR__ . '/config.php';
 session_start();
 

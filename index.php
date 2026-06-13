@@ -1,7 +1,7 @@
 <?php
-// =====================================================
-// index.php — Tienda Abbie BEE
-// =====================================================
+ini_set('session.cookie_secure', 0);
+ini_set('session.cookie_samesite', 'Lax');
+
 require_once __DIR__ . '/config.php';
 $db = getDB();
 
