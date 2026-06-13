@@ -5,6 +5,11 @@ define('DB_NAME', getenv('DB_NAME') ?: getenv('MYSQLDATABASE') ?: 'railway');
 define('DB_USER', getenv('DB_USER') ?: getenv('MYSQLUSER') ?: 'root');
 define('DB_PASS', getenv('DB_PASS') ?: getenv('MYSQLPASSWORD') ?: '');
 
+define('UPLOAD_DIR', __DIR__ . '/uploads/');
+define('UPLOAD_URL', '/uploads/');
+
+if (session_status() === PHP_SESSION_NONE) session_start();
+
 function getDB(): PDO {
     static $pdo = null;
     if ($pdo) return $pdo;
@@ -16,4 +21,9 @@ function getDB(): PDO {
     return $pdo;
 }
 
-define('UPLOAD_URL', '/uploads/');
+function requireAdmin(): void {
+    if (empty($_SESSION['admin_id'])) {
+        header('Location: login.php');
+        exit;
+    }
+}
