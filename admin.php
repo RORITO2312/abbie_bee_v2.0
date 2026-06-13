@@ -720,7 +720,7 @@ function estadoBadge(string $estado): string {
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-top">
     <div class="sidebar-bee">🐝</div>
-    <div class="sidebar-brand">Abbie BEE</div>
+    <img src="/uploads/logo.png" alt="Abbie BEE" style="height:48px;object-fit:contain;margin-bottom:0.25rem">
     <div class="sidebar-role">Panel de Control</div>
   </div>
 

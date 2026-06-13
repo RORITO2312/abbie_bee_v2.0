@@ -1,7 +1,7 @@
 <?php
-ini_set('session.cookie_secure', 0);
-ini_set('session.cookie_samesite', 'Lax');
-
+// =====================================================
+// index.php — Tienda Abbie BEE
+// =====================================================
 require_once __DIR__ . '/config.php';
 $db = getDB();
 
@@ -495,7 +495,7 @@ function pImgOrSvg(array $p, string $cls = ''): string {
     <a href="#" onclick="showPage('contact')" id="nav-contact">Contacto</a>
   </nav>
   <div class="sf-logo-wrap">
-    <img src="/uploads/logo.png" alt="Abbie BEE" style="height:52px;object-fit:contain;filter:brightness(0) invert(1)">
+    <img src="/uploads/logo.png" alt="Abbie BEE" style="height:56px;object-fit:contain;">
   </div>
   <div class="sf-actions">
     <div class="search-wrap">
@@ -890,7 +890,7 @@ function pImgOrSvg(array $p, string $cls = ''): string {
     </div>
     <div class="footer-grid">
       <div class="footer-brand">
-        <h3>Abbie 🐝 BEE</h3>
+        <img src="/uploads/logo.png" alt="Abbie BEE" style="height:64px;object-fit:contain;margin-bottom:0.75rem">
         <p>Joyería de edición limitada. Piezas únicas, hipoalergénicas y resistentes al agua, diseñadas para mujeres que brillan con personalidad.</p>
         <p style="margin-top:1rem;color:rgba(255,255,255,0.45);font-size:0.8rem">Cusco, Perú · Envíos nacionales</p>
       </div>

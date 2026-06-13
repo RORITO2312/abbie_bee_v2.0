@@ -1,8 +1,10 @@
 <?php
-ini_set('session.cookie_secure', 0);
-ini_set('session.cookie_samesite', 'Lax');
-
+// =====================================================
+// login.php — Panel de acceso administrador
+// Abbie BEE
+// =====================================================
 require_once __DIR__ . '/config.php';
+session_start();
 
 // Si ya está logueado, redirigir
 if (!empty($_SESSION['admin_id'])) {
@@ -241,8 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <div class="login-wrapper">
     <div class="login-card">
-      <div class="login-logo">🐝</div>
-      <h1 class="login-title">Abbie BEE</h1>
+      <img src="/uploads/logo.png" alt="Abbie BEE" style="height:90px;object-fit:contain;margin:0 auto 1rem;display:block">
       <p class="login-subtitle">Panel de Administración · Acceso privado</p>
 
       <?php if ($error): ?>
