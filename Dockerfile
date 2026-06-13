@@ -1,12 +1,10 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-RUN a2dismod mpm_event mpm_worker 2>/dev/null; \
-    a2enmod mpm_prefork rewrite
+WORKDIR /app
+COPY . /app/
 
-COPY . /var/www/html/
+EXPOSE 8080
 
-EXPOSE 80
-
-CMD ["apache2-foreground"]
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "/app"]
