@@ -3,6 +3,7 @@
 // admin.php — Panel de Administración Abbie BEE
 // =====================================================
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/cloudinary.php';
 requireAdmin();
 
 $db      = getDB();
@@ -29,15 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $imagen     = '';
 
         if ($nombre && $precio > 0) {
-            // Subir imagen
+            // Subir imagen a Cloudinary
             if (!empty($_FILES['imagen']['tmp_name'])) {
-                $ext  = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
+                $ext     = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
                 $allowed = ['jpg','jpeg','png','webp'];
                 if (in_array($ext, $allowed)) {
-                    $fname = 'prod_' . time() . '_' . rand(100,999) . '.' . $ext;
-                    if (!is_dir(UPLOAD_DIR)) mkdir(UPLOAD_DIR, 0775, true);
-                    move_uploaded_file($_FILES['imagen']['tmp_name'], UPLOAD_DIR . $fname);
-                    $imagen = $fname;
+                    $url = uploadToCloudinary($_FILES['imagen']['tmp_name']);
+                    if ($url) $imagen = $url;
                 }
             }
             $stmt = $db->prepare("INSERT INTO productos (nombre, descripcion, precio, categoria, material, color, stock, imagen, destacado) VALUES (?,?,?,?,?,?,?,?,?)");
@@ -64,13 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id && $nombre) {
             $imagen_update = '';
             if (!empty($_FILES['imagen']['tmp_name'])) {
-                $ext  = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
+                $ext     = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
                 $allowed = ['jpg','jpeg','png','webp'];
                 if (in_array($ext, $allowed)) {
-                    $fname = 'prod_' . time() . '_' . rand(100,999) . '.' . $ext;
-                    if (!is_dir(UPLOAD_DIR)) mkdir(UPLOAD_DIR, 0775, true);
-                    move_uploaded_file($_FILES['imagen']['tmp_name'], UPLOAD_DIR . $fname);
-                    $imagen_update = $fname;
+                    $url = uploadToCloudinary($_FILES['imagen']['tmp_name']);
+                    if ($url) $imagen_update = $url;
                 }
             }
             if ($imagen_update) {
@@ -189,7 +186,7 @@ if ($section === 'promociones') {
 // ── Helper imagen ──
 function imgTag(string $img, string $alt = '', string $cls = ''): string {
     if ($img) {
-        $url = UPLOAD_URL . htmlspecialchars($img);
+        $url = str_starts_with($img, 'http') ? htmlspecialchars($img) : UPLOAD_URL . htmlspecialchars($img);
         return "<img src=\"$url\" alt=\"" . htmlspecialchars($alt) . "\" class=\"$cls\" style=\"object-fit:cover\">";
     }
     return '<span class="no-img">🐝</span>';
@@ -213,17 +210,8 @@ function estadoBadge(string $estado): string {
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
-  <link rel="icon" type="image/png" href="/uploads/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Abbie BEE — Admin</title>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XS3LZP6NT2"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XS3LZP6NT2');
-  </script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
@@ -921,7 +909,7 @@ function estadoBadge(string $estado): string {
                   <i class="bi bi-cloud-arrow-up"></i>
                   <div class="img-upload-text">Haz clic para subir imagen</div>
                   <?php if ($edit_prod['imagen']): ?>
-                    <img src="<?= UPLOAD_URL . htmlspecialchars($edit_prod['imagen']) ?>" class="img-upload-preview" id="edit_prev">
+                    <img src="<?= str_starts_with($edit_prod['imagen'],'http') ? htmlspecialchars($edit_prod['imagen']) : UPLOAD_URL . htmlspecialchars($edit_prod['imagen']) ?>" class="img-upload-preview" id="edit_prev">
                   <?php else: ?>
                     <img class="img-upload-preview" id="edit_prev" style="display:none">
                   <?php endif; ?>

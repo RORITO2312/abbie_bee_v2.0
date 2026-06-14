@@ -13,7 +13,10 @@ $destacados = array_filter($productos, fn($p) => $p['destacado']);
 $resenas = $db->query("SELECT * FROM resenas WHERE activo=1 ORDER BY fecha DESC LIMIT 6")->fetchAll();
 
 function pImgUrl(array $p): string {
-    return $p['imagen'] ? UPLOAD_URL . htmlspecialchars($p['imagen']) : '';
+    if (!$p['imagen']) return '';
+    // Si es URL completa (Cloudinary), usarla directamente
+    if (str_starts_with($p['imagen'], 'http')) return htmlspecialchars($p['imagen']);
+    return UPLOAD_URL . htmlspecialchars($p['imagen']);
 }
 function pImgOrSvg(array $p, string $cls = ''): string {
     $url = pImgUrl($p);
@@ -25,7 +28,6 @@ function pImgOrSvg(array $p, string $cls = ''): string {
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
-  <link rel="icon" type="image/png" href="/uploads/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Abbie BEE — Joyería exclusiva</title>
   <meta name="description" content="Abbie BEE – Joyas de edición limitada, resistentes al agua e hipoalergénicas. Diseños exclusivos para mujeres modernas."/>
@@ -35,14 +37,6 @@ function pImgOrSvg(array $p, string $cls = ''): string {
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Kavoon&display=swap" rel="stylesheet"/>
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XS3LZP6NT2"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XS3LZP6NT2');
-  </script>
   <!-- SweetAlert2 -->
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
 
@@ -592,7 +586,7 @@ function pImgOrSvg(array $p, string $cls = ''): string {
         <div class="product-card" onclick="openProduct(<?= $p['id'] ?>)">
           <div class="prod-img-wrap">
             <?php if ($p['imagen']): ?>
-              <img src="<?= UPLOAD_URL . htmlspecialchars($p['imagen']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+              <img src="<?= str_starts_with($p['imagen'],'http') ? htmlspecialchars($p['imagen']) : UPLOAD_URL . htmlspecialchars($p['imagen']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
             <?php else: ?>
               <div class="img-placeholder"><i class="bi bi-gem" style="font-size:3rem;color:var(--pink-soft)"></i></div>
             <?php endif; ?>
@@ -619,7 +613,7 @@ function pImgOrSvg(array $p, string $cls = ''): string {
           <div class="product-card" onclick="openProduct(<?= $p['id'] ?>)">
             <div class="prod-img-wrap">
               <?php if ($p['imagen']): ?>
-                <img src="<?= UPLOAD_URL . htmlspecialchars($p['imagen']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+                <img src="<?= str_starts_with($p['imagen'],'http') ? htmlspecialchars($p['imagen']) : UPLOAD_URL . htmlspecialchars($p['imagen']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
               <?php else: ?>
                 <div class="img-placeholder"><i class="bi bi-gem" style="font-size:3rem;color:var(--pink-soft)"></i></div>
               <?php endif; ?>
@@ -1030,7 +1024,7 @@ function renderCart() {
   let total = 0;
   body.innerHTML = cart.map(item => {
     total += item.price * item.qty;
-    const imgHtml = item.img ? `<img src="${UPLOAD_URL}${item.img}" alt="${item.name}">` : '🐝';
+    const imgHtml = item.img ? `<img src="${item.img.startsWith('http') ? item.img : UPLOAD_URL + item.img}" alt="${item.name}">` : '🐝';
     return `<div class="cart-item">
       <div class="ci-img">${imgHtml}</div>
       <div class="ci-info">
@@ -1145,7 +1139,7 @@ function renderAllProducts(cat) {
     return;
   }
   grid.innerHTML = filtered.map(p => {
-    const imgHtml = p.imagen ? `<img src="${UPLOAD_URL}${p.imagen}" alt="${p.nombre}">` : `<div class="img-placeholder"><i class="bi bi-gem" style="font-size:3rem;color:var(--pink-soft)"></i></div>`;
+    const imgHtml = p.imagen ? `<img src="${p.imagen.startsWith('http') ? p.imagen : UPLOAD_URL + p.imagen}" alt="${p.nombre}">` : `<div class="img-placeholder"><i class="bi bi-gem" style="font-size:3rem;color:var(--pink-soft)"></i></div>`;
     const badge   = p.destacado ? '<span class="prod-badge"><i class="bi bi-star-fill"></i> Destacado</span>' : '';
     return `<div class="product-card" onclick="openProduct(${p.id})">
       <div class="prod-img-wrap">
@@ -1190,7 +1184,7 @@ function filterCat(cat) {
 function openProduct(id) {
   const p = ALL_PRODUCTS.find(x => x.id === id);
   if (!p) return;
-  const imgHtml = p.imagen ? `<img src="${UPLOAD_URL}${p.imagen}" alt="${p.nombre}" style="width:100%;border-radius:1rem;object-fit:cover;max-height:280px">` : `<div style="background:var(--pink-pale);border-radius:1rem;height:200px;display:flex;align-items:center;justify-content:center;font-size:4rem">🐝</div>`;
+  const imgHtml = p.imagen ? `<img src="${p.imagen.startsWith('http') ? p.imagen : UPLOAD_URL + p.imagen}" alt="${p.nombre}" style="width:100%;border-radius:1rem;object-fit:cover;max-height:280px">` : `<div style="background:var(--pink-pale);border-radius:1rem;height:200px;display:flex;align-items:center;justify-content:center;font-size:4rem">🐝</div>`;
   Swal.fire({
     html: `
       ${imgHtml}
@@ -1247,7 +1241,7 @@ function doSearch() {
       const chips = document.querySelectorAll('.filter-chip');
       chips.forEach(c => { c.classList.remove('active'); if (c.textContent.trim() === 'Todas') c.classList.add('active'); });
       grid.innerHTML = filtered.map(p => {
-        const imgHtml = p.imagen ? `<img src="${UPLOAD_URL}${p.imagen}" alt="${p.nombre}">` : `<div class="img-placeholder"><i class="bi bi-gem" style="font-size:3rem;color:var(--pink-soft)"></i></div>`;
+        const imgHtml = p.imagen ? `<img src="${p.imagen.startsWith('http') ? p.imagen : UPLOAD_URL + p.imagen}" alt="${p.nombre}">` : `<div class="img-placeholder"><i class="bi bi-gem" style="font-size:3rem;color:var(--pink-soft)"></i></div>`;
         return `<div class="product-card" onclick="openProduct(${p.id})">
           <div class="prod-img-wrap">${imgHtml}</div>
           <div class="prod-info">
