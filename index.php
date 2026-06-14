@@ -25,6 +25,7 @@ function pImgOrSvg(array $p, string $cls = ''): string {
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="icon" type="image/png" href="/uploads/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Abbie BEE — Joyería exclusiva</title>
   <meta name="description" content="Abbie BEE – Joyas de edición limitada, resistentes al agua e hipoalergénicas. Diseños exclusivos para mujeres modernas."/>

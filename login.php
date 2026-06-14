@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="icon" type="image/png" href="/uploads/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Abbie BEE — Acceso Administrador</title>
   <!-- Google tag (gtag.js) -->
